@@ -2,14 +2,14 @@
 <html lang="en">
   <head>
     <script>
-      if ((window.location.host == "stedolan.github.io") && (window.location.protocol != "https:"))
+      if ((window.location.host == "jqlang.github.io") && (window.location.protocol != "https:"))
         window.location.protocol = "https";
     </script>
     <meta charset="utf-8">
     <title>jq 1.5 Manual</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link rel="canonical" href="https://stedolan.github.io/jq/manual/v1.5/" />
+    <link rel="canonical" href="https://jqlang.github.io/jq/manual/v1.5/" />
     <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/spacelab/bootstrap.min.css" rel="stylesheet" integrity="sha256-j7Dtnd7ZjexEiPNbscbopFn9+Cs0b3TLipKsWAPHZIM= sha512-RFhfi6P8zWMAJrEGU+CPjuxPh3r/UUBGqQ+/o6WKPIVZmQqeOipGotH2ihRULuQ8wsMBoK15TSZqc/7VYWyuIw==" crossorigin="anonymous">
     <link rel="stylesheet" href="/jq/css/base.css" type="text/css">
     <!--[if lt IE 9]>
@@ -46,10 +46,10 @@
                 <a href="/jq/manual/">Manual</a>
               </li>
             
-            <li><a href="https://github.com/stedolan/jq/issues">Issues</a></li>
-            <li><a href="https://github.com/stedolan/jq">Source</a></li>
+            <li><a href="https://github.com/jqlang/jq/issues">Issues</a></li>
+            <li><a href="https://github.com/jqlang/jq">Source</a></li>
             <li><a href="https://jqplay.org">Try online!</a></li>
-            <li><a href="https://raw.githubusercontent.com/stedolan/jq/master/NEWS">News</a></li>
+            <li><a href="https://raw.githubusercontent.com/jqlang/jq/master/NEWS">News</a></li>
           </ul>
         </div>
       </div>
@@ -439,8 +439,8 @@ you need to surround it with double quotes like this: <code>."foo$"</code>.</p>
                     <code>.foo?</code>
                     
                   </h3>
-                  <p>Just like <code>.foo</code>, but does not output even an error when <code>.</code>
-is not an array or an object.</p>
+                  <p>Just like <code>.foo</code>, but does not output an error when <code>.</code> is not an
+object.</p>
 
                   
                     <div>
@@ -4837,7 +4837,7 @@ structures like <code>reduce</code>, <code>foreach</code>, <code>while</code>, a
 <pre><code># Repeat an expression until it raises "break" as an
 # error, then stop repeating without re-raising the error.
 # But if the error caught is not "break" then re-raise it.
-try repeat(exp) catch .=="break" then empty else error;
+try repeat(exp) catch if .=="break" then empty else error
 </code></pre>
 <p>jq has a syntax for named lexical labels to "break" or "go (back) to":</p>
 <pre><code>label $out | ... break $out ...
@@ -4908,8 +4908,8 @@ STRING | FILTER( [REGEX] )
 STRING | FILTER( [REGEX, FLAGS] )
 </code></pre>
 <p>where:
-<em> STRING, REGEX and FLAGS are jq strings and subject to jq string interpolation;
-</em> REGEX, after string interpolation, should be a valid PCRE regex;
+* STRING, REGEX and FLAGS are jq strings and subject to jq string interpolation;
+* REGEX, after string interpolation, should be a valid PCRE regex;
 * FILTER is one of <code>test</code>, <code>match</code>, or <code>capture</code>, as described below.</p>
 <p>FLAGS is a string consisting of one of more of the supported flags:</p>
 <ul>
@@ -4924,7 +4924,7 @@ STRING | FILTER( [REGEX, FLAGS] )
 </ul>
 <p>To match whitespace in an x pattern use an escape such as \s, e.g.</p>
 <ul>
-<li>test( "a\sb", "x" ).</li>
+<li>test( "a\\sb"; "x" )</li>
 </ul>
 <p>Note that certain flags may also be specified within REGEX, e.g.</p>
 <ul>
@@ -5198,7 +5198,7 @@ input string with <code>tostring</code>, after interpolation.  <code>tostring</c
 be a jq string, and may contain references to named captures. The
 named captures are, in effect, presented as a JSON object (as
 constructed by <code>capture</code>) to <code>tostring</code>, so a reference to a captured
-variable named "x" would take the form: "(.x)".</p>
+variable named "x" would take the form: <code>"\(.x)"</code>.</p>
 
                   
                 </section>
@@ -5228,7 +5228,7 @@ variable (as a function parameter, object member, or whatever) in
 which to place the data.</p>
 <p>It is also possible to define functions in jq, although this is
 is a feature whose biggest use is defining jq's standard library
-(many jq functions such as <code>map</code> and <code>find</code> are in fact written
+(many jq functions such as <code>map</code> and <code>select</code> are in fact written
 in jq).</p>
 <p>jq has reduction operators, which are very powerful but a bit
 tricky.  Again, these are mostly used internally, to define some
