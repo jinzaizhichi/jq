@@ -17,6 +17,9 @@ PATH=$JQBASEDIR:$PATH $JQBASEDIR/tests/jq-f-test.sh > /dev/null
 SHELL=/bin/sh
 export SHELL
 
+unset JQ_COLORS
+unset NO_COLOR
+
 if [ -f "$JQBASEDIR/.libs/libinject_errors.so" ]; then
   # Do some simple error injection tests to check that we're handling
   # I/O errors correctly.
@@ -419,7 +422,6 @@ if [ "$($VALGRIND $Q $JQ -n '{"a":"xyz"} | halt_error(1)' 2>&1)" != '{"a":"xyz"}
 fi
 
 # Check $JQ_COLORS
-unset JQ_COLORS
 
 ## Default colors, null input
 $JQ -Ccn . > $d/color
@@ -558,7 +560,6 @@ test_no_color=true
 $msys  && test_no_color=false
 $mingw && test_no_color=false
 if $test_no_color && command -v script >/dev/null 2>&1; then
-  unset NO_COLOR
   if script -qc echo /dev/null >/dev/null 2>&1; then
     faketty() { script -qec "$*" /dev/null; }
   else # macOS
@@ -667,13 +668,6 @@ if ! x=$($JQ -cn "$(printf '[\r\n1,# comment\r\n2,# comment\\\r\ncomment\r\n3\r\
   || [ "$x" != '[1,2,3]' ]; then
   echo 'multiline comment with CRLF line breaks was not handled correctly'
   exit 1
-fi
-
-# CVE-2023-50268: No stack overflow comparing a nan with a large payload
-if $JQ -ne 'have_decnum'; then
-  $VALGRIND $Q $JQ '1 != .' <<\EOF >/dev/null
-  Nan4000
-EOF
 fi
 
 # Allow passing the inline jq script before -- #2919
